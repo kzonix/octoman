@@ -12,7 +12,7 @@
   "dependencies": {
     "@octokit/core": "^3.1.1",
     "@octokit/rest": "^18.0.3",
-    "add-file-to-github-repo": "^1.0.0",
+    "dotenv": "^8.2.0",
     "moment": "^2.27.0"
   }
 }

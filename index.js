@@ -1,6 +1,9 @@
+const env = require('dotenv');
 const {Octokit} = require("@octokit/core");
 const moment = require("moment")
-const octokit = new Octokit({auth: `e4cdd8a55395f539814210510b1ec53bfe0d6d4d`});
+
+env.config({debug: true});
+const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
 
 async function approve(pull) {
     console.log(`Going to approve PR ${pull.number}`)
@@ -36,7 +39,6 @@ async function addLabels(pull) {
 
 
 }
-
 
 async function removeComments(pull) {
     console.debug(`Deleting comments from PR #${pull.number}`)
