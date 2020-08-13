@@ -1,8 +1,7 @@
-const env = require('dotenv');
+
 const {Octokit} = require("@octokit/core");
 const moment = require("moment")
 
-env.config({debug: true});
 const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
 
 async function approve(pull) {
@@ -160,9 +159,10 @@ async function processPullRequest(pull) {
 
 async function managePullRequests(owner, repoName) {
     console.log(`Processing pull requests ::: ${owner}/${repoName}`)
-    let pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls?state=all', {
+    let pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
         owner: owner,
         repo: repoName,
+        state: 'open',
         per_page: 1000,
         page: 1
     })
