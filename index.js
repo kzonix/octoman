@@ -160,9 +160,10 @@ async function processPullRequest(pull) {
 
 async function managePullRequests(owner, repoName) {
     console.log(`Processing pull requests ::: ${owner}/${repoName}`)
-    let pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls?state=all', {
+    let pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
         owner: owner,
         repo: repoName,
+        state: 'open',
         per_page: 1000,
         page: 1
     })
