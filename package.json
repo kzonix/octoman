@@ -2,9 +2,9 @@
   "name": "octoman",
   "version": "1.0.0",
   "description": "",
-  "main": "octoman.mjs",
+  "main": "octo/core.mjs",
   "scripts": {
-    "start": "node octoman.mjs",
+    "start": "node octo/core.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

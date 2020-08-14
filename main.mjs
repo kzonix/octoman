@@ -7,7 +7,6 @@ export class Startup {
         let logger = new OctomanLogger("Main", 'info', {destination: './info'}).logger;
         logger.info("Starting...")
         env.config({debug: true});
-
     }
 }
 
