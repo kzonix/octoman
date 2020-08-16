@@ -7,13 +7,11 @@ const baseLoggerOptions = {
     safe: true,
     messageKey: "message",
     timestamp: P.stdTimeFunctions.isoTime,
-    prettyPrint: true,
-    mixin: function () {
-        return {
-            appName: `Octoman/${moment.utc().toISOString()}`,
-            ...process.ENV
-        }
-    }
+    prettyPrint: false,
+    mixin: () => ({
+        appName: `Octoman/${moment.utc().toISOString()}`,
+        ...process.ENV
+    })
 }
 
 const levels = {
@@ -36,12 +34,13 @@ export class OctomanLogger {
     constructor(name, level, {destination, ...props}) {
         this.#name = name;
         this.#level = levels[level] || 'info';
+        // todo: refactor this part to some file utility class
         if (destination != null && typeof destination === 'string') {
             mkdirp.sync(destination)
         } else {
             mkdirp.sync(`./logs/${this.#level}/${this.#name.toLowerCase()}`)
         }
-        this.#destination = path.join(destination, `${this.#level}-${this.#name.toLowerCase()}.log`);
+        this.#destination = path.join(destination, `${this.#level}-${this.#name.toLowerCase()}.log.json`);
         this.#props = props;
         this.#init();
     }
@@ -60,6 +59,7 @@ export class OctomanLogger {
         const fn = this.#logger[levels[this.#level]]
         fn.call(this.#logger, msg);
     }
+
 
     get logger() {
         return this.#logger;

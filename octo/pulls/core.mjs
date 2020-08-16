@@ -1,10 +1,18 @@
-import {octokit} from "../core";
+import {octokit} from "../core.mjs";
+import {OctomanLogger} from "../../logger.mjs"
 import moment from "moment";
 
 // todo: refactor current class to separate resposibility of the label management and comments with bots
-class PullRequestManagement {
-    async approve(pull) {
-        console.log(`Going to approve PR ${pull.number}`)
+export class PullRequestManagement {
+
+    #logger;
+
+    constructor() {
+        this.#logger = new OctomanLogger("PullRequestManagement", 'info', {destination: './info'}).logger
+    }
+
+    async #approve(pull) {
+        this.#logger.info(`Going to approve PR ${pull.number}`)
         await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
             owner: pull.base.user.login,
             repo: pull.base.repo.name,
@@ -13,20 +21,20 @@ class PullRequestManagement {
         })
     }
 
-    async addLabels(pull) {
+    async #addLabels(pull) {
         // delete all labels
         let res = (pull.labels || [{name: "none"}])[0]?.name === 'dependencies'
         if (res) {
-            console.log(`#${pull.number} PR with ${pull.id} already has right label (dependencies).`)
+            this.#logger.info(`#${pull.number} PR with ${pull.id} already has right label (dependencies).`)
         } else {
-            console.log(`#${pull.number} PR with ${pull.id} has extra labels (dependencies). Deleting...`)
+            this.#logger.info(`#${pull.number} PR with ${pull.id} has extra labels (dependencies). Deleting...`)
             await octokit.request('DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
                 issue_number: pull.number,
             })
             // mark dependencies
-            console.log(`#${pull.number} PR with ${pull.id} id - Adding the correct label (dependencies).`)
+            this.#logger.info(`#${pull.number} PR with ${pull.id} id - Adding the correct label (dependencies).`)
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/labels', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
@@ -38,8 +46,8 @@ class PullRequestManagement {
 
     }
 
-    async removeComments(pull) {
-        console.debug(`Deleting comments from PR #${pull.number}`)
+    async #removeComments(pull) {
+        this.#logger.info(`Deleting comments from PR #${pull.number}`)
         let comments = await octokit.request('GET /repos/{owner}/{repo}/issues/{issue_number}/comments', {
             owner: pull.base.user.login,
             repo: pull.base.repo.name,
@@ -47,7 +55,7 @@ class PullRequestManagement {
         })
 
         for (const comment of comments.data) {
-            console.debug(`Deleting comment #${comment.id} ...`)
+            this.#logger.info(`Deleting comment #${comment.id} ...`)
             await octokit.request('DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
@@ -63,17 +71,17 @@ class PullRequestManagement {
 
         for (const event of events.data) {
             if (event.event === 'labeled')
-                console.debug(`PR#${pull.number} - event = `, event.label)
+                this.#logger.info(`PR#${pull.number} - event = `, event.label)
         }
     }
 
-    async conversation(pull) {
+    async #conversation(pull) {
         //Todo: 29.08.2020 - refactor this part with separate method
         // - load all comments of PR, determine the last comment of bot (problem with rebasing, asking for recreation)
         // - strategy pattern: use appropriate language for communication with bots.
         // - set comments with appropriate commands or fallback logic to deal with conflict PR.
         if (pull.user.login === 'renovate[bot]') {
-            console.log(" > revonate - rebase");
+            this.#logger.info(" > revonate - rebase");
             await octokit.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
@@ -83,7 +91,7 @@ class PullRequestManagement {
             })
         }
         if (pull.user.login === 'depfu[bot]') {
-            console.log(" > depfu - rebase");
+            this.#logger.info(" > depfu - rebase");
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
@@ -93,7 +101,7 @@ class PullRequestManagement {
         }
         // TODO: Depfu bot - separate class.
         if (pull.user.login === 'dependabot-preview[bot]') {
-            console.log(" > dependabot - rebase");
+            this.#logger.info(" > dependabot - rebase");
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
@@ -102,7 +110,7 @@ class PullRequestManagement {
             })
         }
         if (pull.user.login === 'dependabot-preview[bot]') {
-            console.log(" > dependabot - recreate");
+            this.#logger.info(" > dependabot - recreate");
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
@@ -112,11 +120,11 @@ class PullRequestManagement {
         }
     }
 
-    async processPullRequest(pull) {
+    async #processPullRequest(pull) {
         if (pull.user.login.indexOf('[bot]') >= 0) {
-            console.log(`#${pull.number} PR with number ${pull.id} is a bot request to update dependencies.`)
+            this.#logger.info(`#${pull.number} PR with number ${pull.id} is a bot request to update dependencies.`)
             if (pull.state !== 'closed') {
-                console.debug(`PR ::: ${pull.base.user.login}/${pull.base.repo.name} #${pull.number} - processing...`)
+                this.#logger.info(`PR ::: ${pull.base.user.login}/${pull.base.repo.name} #${pull.number} - processing...`)
                 let reviews = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
                     owner: pull.base.user.login,
                     repo: pull.base.repo.name,
@@ -134,30 +142,30 @@ class PullRequestManagement {
                             }
                         }
                     if (lastReview.state !== 'APPROVED') {
-                        await approve(pull)
+                        await this.#approve(pull)
                     } else {
-                        console.log(`#${pull.number} PR with number ${pull.id} is already approved.`)
+                        this.#logger.info(`#${pull.number} PR with number ${pull.id} is already approved.`)
                     }
                 } else {
-                    await approve(pull);
+                    await this.#approve(pull);
                 }
             } else {
-                console.log(`#${pull.number} PR with number ${pull.id} is already closed.`)
+                this.#logger.info(`#${pull.number} PR with number ${pull.id} is already closed.`)
             }
 
-            await addLabels(pull)
+            await this.#addLabels(pull)
 
-            await removeComments(pull);
+            await this.#removeComments(pull);
 
             if (pull.state !== 'closed') {
                 // TODO: Use separate class (e.g. BotConversationStrategy.start(pull))
-                await conversation(pull);
+                await this.#conversation(pull);
             }
         }
     }
 
-    async managePullRequests(owner, repoName) {
-        console.log(`Processing pull requests ::: ${owner}/${repoName}`)
+    async #managePullRequests(owner, repoName) {
+        this.#logger.info(`Processing pull requests ::: ${owner}/${repoName}`)
         let pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
             owner: owner,
             repo: repoName,
@@ -165,38 +173,40 @@ class PullRequestManagement {
             per_page: 1000,
             page: 1
         })
-        console.log(`${pulls.data.length} pull requests is going to be processed in '${owner}/${repoName}' repo`)
+        this.#logger.info(`${pulls.data.length} pull requests is going to be processed in '${owner}/${repoName}' repo`)
         for (const pull of pulls.data.reverse()) {
-            await processPullRequest(pull);
+            await this.#processPullRequest(pull);
         }
-        console.log(`Processing pull requests has been finished ::: ${owner}/${repoName}`)
+        this.#logger.info(`Processing pull requests has been finished ::: ${owner}/${repoName}`)
 
     }
 
-    async main() {
+    async start() {
         let usr = await octokit.request('GET /user')
         let orgs = await octokit.request('GET /user/orgs')
-        console.debug(`\n# User = ${usr.data.login}\n# Name = ${usr.data.name}\n# Email = ${usr.data.email}\n`
-        )
+        this.#logger.info(`# User = ${usr.data.login}`)
+        this.#logger.info(`# Name = ${usr.data.name}`)
+        this.#logger.info(`# Email = ${usr.data.email}`)
+
         for (const org of orgs.data) {
-            console.debug(`Starting scanning the ${org.login} org...`)
+            this.#logger.info(`Starting scanning the ${org.login} org...`)
             let repos = await octokit.request('GET /orgs/{org}/repos', {
                 org: org.login
             })
 
             for (const repo of repos.data) {
-                console.debug(`Starting scanning the ${repo.name} repository...`)
-                await managePullRequests(org.login, repo.name);
+                this.#logger.info(`Starting scanning the ${repo.name} repository...`)
+                await this.#managePullRequests(org.login, repo.name);
             }
         }
 
         let repos = await octokit.request('GET /user/repos')
         for (const repo of repos.data) {
-            console.debug(`Starting scanning the ${repo.full_name} repository...`)
+            this.#logger.info(`Starting scanning the ${repo.full_name} repository...`)
             if (!repo.archived)
-                await managePullRequests(repo.owner.login, repo.name);
+                await this.#managePullRequests(repo.owner.login, repo.name);
             else {
-                console.debug(`Repository ${repo.full_name} is archived. Skipped...`)
+                this.#logger.info(`Repository ${repo.full_name} is archived. Skipped...`)
             }
         }
     }
