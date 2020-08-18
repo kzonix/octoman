@@ -1,0 +1,58 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true
+    },
+    "extends": [
+        "prettier/standard",
+        "prettier-standard/base",
+        "standard"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true
+        }
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "no-cond-assign": [
+            "error",
+            "always"
+        ],
+        "lines-between-class-members": "warn",
+        "brace-style": "warn",
+        "array-bracket-newline": "warn",
+        "arrow-body-style": "error",
+        "class-methods-use-this": "warn",
+        "max-statements": "warn",
+        "max-statements-per-line": "warn",
+        "no-class-assign": "error",
+        "prefer-reflect": "error",
+        "prefer-const": "error",
+        "prefer-rest-params": "error",
+        "prefer-destructuring": "error",
+        "prefer-spread": "error",
+        "prefer-template": "error",
+        "no-inner-declarations": "error",
+        "no-await-in-loop": "warn",
+        "no-console": "error",
+        "no-var": "error",
+        "no-bitwise": "warn",
+        "no-multi-spaces": "off",
+        "no-multiple-empty-lines": "off",
+        "sort-imports": "warn"
+    }
+}

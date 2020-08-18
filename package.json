@@ -1,22 +1,36 @@
 {
-  "name": "octoman",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.mjs",
-  "scripts": {
-    "start": "node main.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@octokit/core": "^3.1.1",
-    "@octokit/rest": "^18.0.3",
-    "mkdirp": "^1.0.4",
-    "dotenv": "^8.2.0",
-    "pino": "^6.5.1",
-    "pino-pretty": "^4.1.0",
-    "moment": "^2.27.0",
-    "chalk": "^4.1.0"
-  }
+    "name": "octoman",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.mjs",
+    "scripts": {
+        "start": "node main.mjs",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@octokit/core": "^3.1.1",
+        "@octokit/rest": "^18.0.3",
+        "chalk": "^4.1.0",
+        "deepmerge": "^4.2.2",
+        "dotenv": "^8.2.0",
+        "mkdirp": "^1.0.4",
+        "moment": "^2.27.0",
+        "pino": "^6.5.1"
+    },
+    "devDependencies": {
+        "eslint": "^7.7.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-config-prettier-standard": "^3.0.1",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.22.0",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1",
+        "prettier": "2.0.5",
+        "prettier-config-standard": "^1.0.1",
+        "standard": "^14.3.4"
+    }
 }

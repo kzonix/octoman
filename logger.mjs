@@ -1,67 +1,81 @@
-import P from 'pino';
-import moment from 'moment';
-import mkdirp from 'mkdirp'
-import path from 'path';
+import P      from "pino"
+import mkdirp from "mkdirp"
+import path   from "path"
+import moment from "moment"
+
 
 const baseLoggerOptions = {
     safe: true,
     messageKey: "message",
     timestamp: P.stdTimeFunctions.isoTime,
-    prettyPrint: false,
     mixin: () => ({
-        appName: `Octoman/${moment.utc().toISOString()}`,
-        ...process.ENV
-    })
+        appName: `Octoman/Kzonix`,
+    }),
 }
 
 const levels = {
-    fatal: 'fatal',
-    error: 'error',
-    warn: 'warn',
-    info: 'info',
-    debug: 'debug',
-    trace: 'trace',
-    silent: 'silent'
+    fatal: "fatal",
+    error: "error",
+    warn: "warn",
+    info: "info",
+    debug: "debug",
+    trace: "trace",
+    silent: "silent",
 }
 
-export class OctomanLogger {
-    #logger;
-    #name;
-    #level;
-    #destination;
-    #props;
 
-    constructor(name, level, {destination, ...props}) {
-        this.#name = name;
-        this.#level = levels[level] || 'info';
+export class OctomanLogger {
+    #logger
+    #name
+    #level
+    #destination
+    #props
+
+
+    constructor(name, level, {...props}) {
+        this.#name = name
+        this.#level = levels[level] || "info"
         // todo: refactor this part to some file utility class
-        if (destination != null && typeof destination === 'string') {
-            mkdirp.sync(destination)
-        } else {
-            mkdirp.sync(`./logs/${this.#level}/${this.#name.toLowerCase()}`)
+        const destination = `./logs/${this.#level}/${this.#name.toLowerCase()}`
+        mkdirp.sync(destination)
+        const dest = {
+            dest: path.join(
+                destination,
+                `${moment().utc().toDate().toISOString()}.${this.#level}.log`,
+            ),
+            minLength: 4096 * 4,
+            sync: false,
         }
-        this.#destination = path.join(destination, `${this.#level}-${this.#name.toLowerCase()}.log.json`);
-        this.#props = props;
-        this.#init();
+        this.#destination =
+            process.env.NODE_ENV === "prod"
+                ? P.destination(dest)
+                : P.destination({sync: false})
+        this.#props = props
+        this.#init()
     }
+
 
     #init() {
-        this.#logger = P({
-            ...baseLoggerOptions,
-            ...this.#props,
-            name: this.#name,
-            level: this.#level,
-        }, P.destination(this.#destination));
-        this.#info(`The logger with '${this.#name}' has been initialized.`);
+        this.#logger = P(
+            {
+                ...baseLoggerOptions,
+                ...this.#props,
+                name: this.#name,
+                level: this.#level,
+            },
+            this.#destination,
+        )
+        this.#info(`The logger with '${this.#name}' has been initialized.`)
     }
+
 
     #info(msg) {
         const fn = this.#logger[levels[this.#level]]
-        fn.call(this.#logger, msg);
+        fn.call(this.#logger, msg)
     }
 
 
     get logger() {
-        return this.#logger;
+        return this.#logger
     }
 }

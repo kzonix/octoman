@@ -1,0 +1,19 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+ij_javascript_force_quote_style = true
+quote_type = single
+ij_javascript_blank_lines_after_imports = 2
+ij_javascript_align_imports = true
+ij_javascript_blank_lines_around_function = 2
+ij_javascript_blank_lines_around_method = 2
+ij_javascript_blank_lines_around_class = 2
+
+
+[*.md]
+trim_trailing_whitespace = false
