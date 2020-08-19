@@ -5,10 +5,7 @@
         "es6": true,
         "node": true
     },
-    "extends": [
-        "prettier-standard/base",
-        "standard"
-    ],
+    "extends": ["prettier-standard/base", "standard"],
     "parser": "@babel/eslint-parser",
     "parserOptions": {
         "ecmaVersion": 11,
@@ -16,13 +13,23 @@
         "requireConfigFile": false,
         "allowImportExportEverywhere": true,
         "ecmaFeatures": {
-            "impliedStrict": true
+            "impliedStrict": true,
+            "globalReturn": true
         },
-        "babelOptions": {
-        }
+        "babelOptions": {}
     },
     "rules": {
-        "no-unused-vars": "error",
+        "strict": "warn",
+        "no-unused-vars": [
+            "error",
+            {
+                "vars": "local",
+                "args": "after-used",
+                "ignoreRestSiblings": false,
+                "varsIgnorePattern": "[iI]gnored",
+                "caughtErrors": "none"
+            }
+        ],
         "no-restricted-imports": "off",
         "indent": ["error", 4],
         "linebreak-style": ["error", "unix"],
