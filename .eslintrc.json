@@ -1,20 +1,29 @@
 {
     "env": {
         "browser": true,
-        "es2020": true
+        "es2020": true,
+        "es6": true,
+        "node": true
     },
     "extends": [
         "prettier-standard/base",
         "standard"
     ],
+    "parser": "@babel/eslint-parser",
     "parserOptions": {
         "ecmaVersion": 11,
         "sourceType": "module",
+        "requireConfigFile": false,
+        "allowImportExportEverywhere": true,
         "ecmaFeatures": {
             "impliedStrict": true
+        },
+        "babelOptions": {
         }
     },
     "rules": {
+        "no-unused-vars": "error",
+        "no-restricted-imports": "off",
         "indent": ["error", 4],
         "linebreak-style": ["error", "unix"],
         "quotes": ["error", "single"],
