@@ -1,28 +1,28 @@
-import P      from "pino"
-import mkdirp from "mkdirp"
-import path   from "path"
-import moment from "moment"
+/** @format */
 
+import P from 'pino'
+import mkdirp from 'mkdirp'
+import path from 'path'
+import moment from 'moment'
 
 const baseLoggerOptions = {
     safe: true,
-    messageKey: "message",
+    messageKey: 'message',
     timestamp: P.stdTimeFunctions.isoTime,
     mixin: () => ({
-        appName: `Octoman/Kzonix`,
-    }),
+        appName: `Octoman/Kzonix`
+    })
 }
 
 const levels = {
-    fatal: "fatal",
-    error: "error",
-    warn: "warn",
-    info: "info",
-    debug: "debug",
-    trace: "trace",
-    silent: "silent",
+    fatal: 'fatal',
+    error: 'error',
+    warn: 'warn',
+    info: 'info',
+    debug: 'debug',
+    trace: 'trace',
+    silent: 'silent'
 }
-
 
 export class OctomanLogger {
     #logger
@@ -31,29 +31,27 @@ export class OctomanLogger {
     #destination
     #props
 
-
-    constructor(name, level, {...props}) {
+    constructor(name, level, { ...props }) {
         this.#name = name
-        this.#level = levels[level] || "info"
+        this.#level = levels[level] || 'info'
         // todo: refactor this part to some file utility class
         const destination = `./logs/${this.#level}/${this.#name.toLowerCase()}`
         mkdirp.sync(destination)
         const dest = {
             dest: path.join(
                 destination,
-                `${moment().utc().toDate().toISOString()}.${this.#level}.log`,
+                `${moment().utc().toDate().toISOString()}.${this.#level}.log`
             ),
             minLength: 4096 * 4,
-            sync: false,
+            sync: false
         }
         this.#destination =
-            process.env.NODE_ENV === "prod"
+            process.env.NODE_ENV === 'prod'
                 ? P.destination(dest)
-                : P.destination({sync: false})
+                : P.destination({ sync: false })
         this.#props = props
         this.#init()
     }
-
 
     #init() {
         this.#logger = P(
@@ -61,19 +59,17 @@ export class OctomanLogger {
                 ...baseLoggerOptions,
                 ...this.#props,
                 name: this.#name,
-                level: this.#level,
+                level: this.#level
             },
-            this.#destination,
+            this.#destination
         )
         this.#info(`The logger with '${this.#name}' has been initialized.`)
     }
-
 
     #info(msg) {
         const fn = this.#logger[levels[this.#level]]
         fn.call(this.#logger, msg)
     }
-
 
     get logger() {
         return this.#logger

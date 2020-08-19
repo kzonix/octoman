@@ -4,7 +4,6 @@
         "es2020": true
     },
     "extends": [
-        "prettier/standard",
         "prettier-standard/base",
         "standard"
     ],
@@ -16,22 +15,10 @@
         }
     },
     "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "no-cond-assign": [
-            "error",
-            "always"
-        ],
+        "indent": ["error", 4],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "single"],
+        "no-cond-assign": ["error", "always"],
         "lines-between-class-members": "warn",
         "brace-style": "warn",
         "array-bracket-newline": "warn",
@@ -53,6 +40,6 @@
         "no-bitwise": "warn",
         "no-multi-spaces": "off",
         "no-multiple-empty-lines": "off",
-        "sort-imports": "warn"
+        "sort-imports": "off"
     }
 }

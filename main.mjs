@@ -1,5 +1,7 @@
+/** @format */
+
 import { PullRequestManagement } from './octo/pulls/core.mjs'
-import { OctomanLogger }         from './logger.mjs'
+import { OctomanLogger } from './logger.mjs'
 
 export class Startup {
     async main () {

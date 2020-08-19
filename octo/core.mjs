@@ -1,6 +1,7 @@
-import env from 'dotenv'
-import pkg from '@octokit/core'
+/** @format */
 
+import pkg from '@octokit/core'
+import env from 'dotenv'
 
 env.config({ debug: true })
 const { Octokit } = pkg

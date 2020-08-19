@@ -8,11 +8,33 @@ indent_size = 4
 trim_trailing_whitespace = true
 ij_javascript_force_quote_style = true
 quote_type = single
-ij_javascript_blank_lines_after_imports = 2
+ij_javascript_blank_lines_after_imports = 1
 ij_javascript_align_imports = true
-ij_javascript_blank_lines_around_function = 2
-ij_javascript_blank_lines_around_method = 2
-ij_javascript_blank_lines_around_class = 2
+ij_javascript_blank_lines_around_function = 1
+ij_javascript_blank_lines_around_method = 1
+ij_javascript_blank_lines_around_class = 1
+ij_any_align_group_field_declarations = true
+ij_any_align_multiline_array_initializer_expression = true
+ij_any_align_multiline_assignment = true
+ij_any_align_multiline_binary_operation = true
+ij_any_align_multiline_chained_methods = true
+ij_any_align_multiline_extends_list = true
+ij_any_align_multiline_parameters = true
+ij_any_align_multiline_for = true
+ij_any_align_multiline_method_parentheses = true
+ij_any_align_multiline_parameters_in_calls = true
+ij_any_align_multiline_parenthesized_expression = true
+ij_any_align_multiline_resources = true
+ij_any_align_multiline_throws_list = true
+ij_any_align_multiline_ternary_operation = true
+ij_editorconfig_align_group_field_declarations = true
+
+ij_javascript_import_sort_module_name = true
+ij_javascript_import_sort_members = true
+ij_javascript_import_merge_members = true
+ij_javascript_spaces_within_imports = true
+ij_any_blank_lines_after_imports = 1
+ij_javascript_imports_wrap = normal
 
 
 [*.md]
