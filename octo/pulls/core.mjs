@@ -29,7 +29,7 @@ export class PullRequestManagement {
 
     async #addLabels (pull) {
         // delete all labels
-        let res =
+        const res =
             (pull.labels || [{ name: 'none' }])[0]?.name === 'dependencies'
         if (res) {
             this.#logger.info(
@@ -65,7 +65,7 @@ export class PullRequestManagement {
 
     async #removeComments (pull) {
         this.#logger.info(`Deleting comments from PR #${pull.number}`)
-        let comments = await octokit.request(
+        const comments = await octokit.request(
             'GET /repos/{owner}/{repo}/issues/{issue_number}/comments',
             {
                 owner: pull.base.user.login,
@@ -86,7 +86,7 @@ export class PullRequestManagement {
             )
         }
 
-        let events = await octokit.request(
+        const events = await octokit.request(
             'GET /repos/{owner}/{repo}/issues/{issue_number}/events',
             {
                 owner: pull.base.user.login,
@@ -103,7 +103,7 @@ export class PullRequestManagement {
     }
 
     async #conversation (pull) {
-        //Todo: 29.08.2020 - refactor this part with separate method
+        // Todo: 29.08.2020 - refactor this part with separate method
         // - load all comments of PR, determine the last comment of bot (problem with rebasing, asking for recreation)
         // - strategy pattern: use appropriate language for communication with bots.
         // - set comments with appropriate commands or fallback logic to deal with conflict PR.
@@ -184,7 +184,7 @@ export class PullRequestManagement {
                     Array.isArray(reviews) &&
                     reviews.length > 0
                 ) {
-                    let lastReview = reviews[0]
+                    let [lastReview] = reviews
                     if (reviews.length > 1) {
                         for (let i = 1; i < reviews.length; i++) {
                             const lastReviewTime = moment(
@@ -227,7 +227,7 @@ export class PullRequestManagement {
 
     async #managePullRequests (owner, repoName) {
         this.#logger.info(`Processing pull requests ::: ${owner}/${repoName}`)
-        let pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+        const pulls = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
             owner: owner,
             repo: repoName,
             state: 'open',
@@ -246,13 +246,13 @@ export class PullRequestManagement {
     }
 
     async start () {
-        let usr = await octokit.request('GET /user')
-        let orgs = await octokit.request('GET /user/orgs')
+        const usr = await octokit.request('GET /user')
+        const orgs = await octokit.request('GET /user/orgs')
         this.#logger.info({ ...usr.data })
 
         for (const org of orgs.data) {
             this.#logger.info(`Starting scanning the ${org.login} org...`)
-            let repos = await octokit.request('GET /orgs/{org}/repos', {
+            const repos = await octokit.request('GET /orgs/{org}/repos', {
                 org: org.login
             })
 
@@ -264,7 +264,7 @@ export class PullRequestManagement {
             }
         }
 
-        let repos = await octokit.request('GET /user/repos')
+        const repos = await octokit.request('GET /user/repos')
         for (const repo of repos.data) {
             this.#logger.info(
                 `Starting scanning the ${repo.full_name} repository...`
