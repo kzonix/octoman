@@ -48,7 +48,7 @@ class OctomanLogger {
         this.#destination =
             process.env.NODE_ENV === 'prod'
                 ? P.destination(dest)
-                : P.destination(dest)
+                : P.destination({ sync: false })
         this.#props = props
         this.#init()
     }
