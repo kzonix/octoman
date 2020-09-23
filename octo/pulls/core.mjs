@@ -1,17 +1,15 @@
 /** @format */
 
-import moment            from 'moment'
-import { OctomanLogger } from '../../logger.mjs'
-import { octokit }       from '../core.mjs'
+import moment      from 'moment'
+import { logger }  from '../../logger.mjs'
+import { octokit } from '../core.mjs'
 
 // todo: refactor current class to separate resposibility of the label management and comments with bots
 export class PullRequestManagement {
     #logger
 
     constructor () {
-        this.#logger = new OctomanLogger('PullRequestManagement', 'info', {
-            destination: './info'
-        }).logger
+        this.#logger = logger.child({ name: 'PullRequestManagement' })
     }
 
     async #approve (pull) {
@@ -74,17 +72,21 @@ export class PullRequestManagement {
             }
         )
 
+        const deleteRequests = Array.of([])
         for (const comment of comments.data) {
             this.#logger.info(`Deleting comment #${comment.id} ...`)
-            await octokit.request(
-                'DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}',
-                {
-                    owner: pull.base.user.login,
-                    repo: pull.base.repo.name,
-                    comment_id: comment.id
-                }
+            deleteRequests.push(
+                octokit.request(
+                    'DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}',
+                    {
+                        owner: pull.base.user.login,
+                        repo: pull.base.repo.name,
+                        comment_id: comment.id
+                    }
+                )
             )
         }
+        await Promise.all(deleteRequests)
 
         const events = await octokit.request(
             'GET /repos/{owner}/{repo}/issues/{issue_number}/events',

@@ -10,7 +10,7 @@ const baseLoggerOptions = {
     messageKey: 'message',
     timestamp: P.stdTimeFunctions.isoTime,
     mixin: () => ({
-        appName: `Octoman/Kzonix`
+        appName: 'Octoman/Kzonix'
     })
 }
 
@@ -24,16 +24,16 @@ const levels = {
     silent: 'silent'
 }
 
-export class OctomanLogger {
+class OctomanLogger {
     #logger
     #name
     #level
     #destination
     #props
 
-    constructor(name, level, { ...props }) {
+    constructor (name, level, { ...props }) {
         this.#name = name
-        this.#level = levels[level] || 'info'
+        this.#level = process.env.LOG_LEVEL || levels[level] || 'info'
         // todo: refactor this part to some file utility class
         const destination = `./logs/${this.#level}/${this.#name.toLowerCase()}`
         mkdirp.sync(destination)
@@ -48,12 +48,12 @@ export class OctomanLogger {
         this.#destination =
             process.env.NODE_ENV === 'prod'
                 ? P.destination(dest)
-                : P.destination({ sync: false })
+                : P.destination(dest)
         this.#props = props
         this.#init()
     }
 
-    #init() {
+    #init () {
         this.#logger = P(
             {
                 ...baseLoggerOptions,
@@ -66,12 +66,14 @@ export class OctomanLogger {
         this.#info(`The logger with '${this.#name}' has been initialized.`)
     }
 
-    #info(msg) {
+    #info (msg) {
         const fn = this.#logger[levels[this.#level]]
         fn.call(this.#logger, msg)
     }
 
-    get logger() {
+    get logger () {
         return this.#logger
     }
 }
+const { logger } = new OctomanLogger('OctomanHttp', 'debug', {})
+export { logger }
