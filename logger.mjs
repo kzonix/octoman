@@ -1,9 +1,9 @@
 /** @format */
 
-import P from 'pino'
 import mkdirp from 'mkdirp'
-import path from 'path'
 import moment from 'moment'
+import path   from 'path'
+import P      from 'pino'
 
 const baseLoggerOptions = {
     safe: true,
@@ -13,7 +13,7 @@ const baseLoggerOptions = {
         appName: 'Octoman/Kzonix'
     })
 }
-
+const logLevel = process.env.LOG_LEVEL
 const levels = {
     fatal: 'fatal',
     error: 'error',
@@ -33,7 +33,7 @@ class OctomanLogger {
 
     constructor (name, level, { ...props }) {
         this.#name = name
-        this.#level = process.env.LOG_LEVEL || levels[level] || 'info'
+        this.#level = levels[level] || 'info'
         // todo: refactor this part to some file utility class
         const destination = `./logs/${this.#level}/${this.#name.toLowerCase()}`
         mkdirp.sync(destination)
@@ -75,5 +75,6 @@ class OctomanLogger {
         return this.#logger
     }
 }
-const { logger } = new OctomanLogger('OctomanHttp', 'debug', {})
+
+const { logger } = new OctomanLogger('OctomanHttp', logLevel, {})
 export { logger }
