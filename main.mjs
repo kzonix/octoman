@@ -1,14 +1,12 @@
 /** @format */
 
+import { logger }                from './logger.mjs'
 import { PullRequestManagement } from './octo/pulls/core.mjs'
-import { OctomanLogger } from './logger.mjs'
 
 export class Startup {
     async main () {
-        const { logger } = new OctomanLogger('Main', 'info', {
-            destination: './info'
-        })
-        logger.info('Starting...')
+        const log = logger.child({ name: 'Startup' })
+        log.info('Starting...')
 
         this.prManager = new PullRequestManagement()
         await this.prManager.start()

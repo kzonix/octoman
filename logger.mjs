@@ -1,19 +1,19 @@
 /** @format */
 
-import P from 'pino'
 import mkdirp from 'mkdirp'
-import path from 'path'
 import moment from 'moment'
+import path   from 'path'
+import P      from 'pino'
 
 const baseLoggerOptions = {
     safe: true,
     messageKey: 'message',
     timestamp: P.stdTimeFunctions.isoTime,
     mixin: () => ({
-        appName: `Octoman/Kzonix`
+        appName: 'Octoman/Kzonix'
     })
 }
-
+const logLevel = process.env.LOG_LEVEL
 const levels = {
     fatal: 'fatal',
     error: 'error',
@@ -24,14 +24,14 @@ const levels = {
     silent: 'silent'
 }
 
-export class OctomanLogger {
+class OctomanLogger {
     #logger
     #name
     #level
     #destination
     #props
 
-    constructor(name, level, { ...props }) {
+    constructor (name, level, { ...props }) {
         this.#name = name
         this.#level = levels[level] || 'info'
         // todo: refactor this part to some file utility class
@@ -53,7 +53,7 @@ export class OctomanLogger {
         this.#init()
     }
 
-    #init() {
+    #init () {
         this.#logger = P(
             {
                 ...baseLoggerOptions,
@@ -66,12 +66,15 @@ export class OctomanLogger {
         this.#info(`The logger with '${this.#name}' has been initialized.`)
     }
 
-    #info(msg) {
+    #info (msg) {
         const fn = this.#logger[levels[this.#level]]
         fn.call(this.#logger, msg)
     }
 
-    get logger() {
+    get logger () {
         return this.#logger
     }
 }
+
+const { logger } = new OctomanLogger('OctomanHttp', logLevel, {})
+export { logger }
