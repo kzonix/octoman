@@ -8,19 +8,19 @@ import { octokit } from "../core.mjs"
 export class PullRequestManagementService {
     #logger
 
-    constructor() {
-        this.#logger = logger.child({name: "PullRequestManagement"})
+    constructor () {
+        this.#logger = logger.child({ name: 'PullRequestManagement' })
     }
 
-    async #approve(pull) {
+    async #approve (pull) {
         this.#logger.info(`Going to approve PR ${pull.number}`)
         await octokit.request(
-            "POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews",
+            'POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
             {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
                 pull_number: pull.number,
-                event: "APPROVE"
+                event: 'APPROVE'
             }
         )
     }
