@@ -1,8 +1,8 @@
 /** @format */
 
-import moment      from "moment"
-import { logger }  from "../../logger.mjs"
-import { octokit } from "../core.mjs"
+import moment      from 'moment'
+import { logger }  from '../../logger.mjs'
+import { octokit } from '../core.mjs'
 
 // todo: refactor current class to separate resposibility of the label management and comments with bots
 export class PullRequestManagementService {
