@@ -1,26 +1,26 @@
 /** @format */
 
-import moment      from 'moment'
-import { logger }  from '../../logger.mjs'
-import { octokit } from '../core.mjs'
+import moment      from "moment"
+import { logger }  from "../../logger.mjs"
+import { octokit } from "../core.mjs"
 
 // todo: refactor current class to separate resposibility of the label management and comments with bots
-export class PullRequestManagement {
+export class PullRequestManagementService {
     #logger
 
-    constructor () {
-        this.#logger = logger.child({ name: 'PullRequestManagement' })
+    constructor() {
+        this.#logger = logger.child({name: "PullRequestManagement"})
     }
 
-    async #approve (pull) {
+    async #approve(pull) {
         this.#logger.info(`Going to approve PR ${pull.number}`)
         await octokit.request(
-            'POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
+            "POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews",
             {
                 owner: pull.base.user.login,
                 repo: pull.base.repo.name,
                 pull_number: pull.number,
-                event: 'APPROVE'
+                event: "APPROVE"
             }
         )
     }
