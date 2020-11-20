@@ -25,6 +25,37 @@ export class PullRequestManagementService {
         )
     }
 
+    async #merge (pull) {
+        this.#logger.info(`Going to merge PR ${pull.number}`)
+        const updatedPullRequest = await octokit.request(
+            'GET /repos/{owner}/{repo}/pulls/{pull_number}',
+            {
+                owner: pull.base.user.login,
+                repo: pull.base.repo.name,
+                pull_number: pull.number
+            }
+        )
+        if (
+            updatedPullRequest.data.mergeable == null ||
+            updatedPullRequest.data.mergeable === false
+        ) {
+            this.#logger.warn(
+                `${pull.number} PR (${pull.base.repo.name}) is not mergeable`
+            )
+        } else {
+            this.#logger.info(`Merging PR ${pull.number}...`)
+            await octokit.request(
+                'PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge',
+                {
+                    owner: pull.base.user.login,
+                    repo: pull.base.repo.name,
+                    pull_number: pull.number,
+                    commit_title: 'chore(octoman): automatic merge'
+                }
+            )
+        }
+    }
+
     async #addLabels (pull) {
         // delete all labels
         const res =
@@ -202,13 +233,16 @@ export class PullRequestManagementService {
                     }
                     if (lastReview.state !== 'APPROVED') {
                         await this.#approve(pull)
+                        await this.#merge(pull)
                     } else {
+                        await this.#merge(pull)
                         this.#logger.info(
                             `#${pull.number} PR with number ${pull.id} is already approved.`
                         )
                     }
                 } else {
                     await this.#approve(pull)
+                    await this.#merge(pull)
                 }
             } else {
                 this.#logger.info(
