@@ -14,15 +14,20 @@ export class PullRequestManagementService {
 
     async #approve (pull) {
         this.#logger.info(`Going to approve PR ${pull.number}`)
-        await octokit.request(
-            'POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
-            {
-                owner: pull.base.user.login,
-                repo: pull.base.repo.name,
-                pull_number: pull.number,
-                event: 'APPROVE'
-            }
-        )
+        try {
+            let res = await octokit.request(
+                'POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
+                {
+                    owner: pull.base.user.login,
+                    repo: pull.base.repo.name,
+                    pull_number: pull.number,
+                    event: 'APPROVE'
+                }
+            )
+            return res;
+        } catch (err) {
+            console.info(err)
+        }
     }
 
     async #merge (pull) {
@@ -195,7 +200,7 @@ export class PullRequestManagementService {
     }
 
     async #processPullRequest (pull) {
-        if (pull.user.login.indexOf('[bot]') >= 0) {
+        if (pull.user.login.indexOf('bot') >= 0 || pull.user.login.indexOf('kzonix')) {
             this.#logger.info(
                 `#${pull.number} PR with number ${pull.id} is a bot request to update dependencies.`
             )
