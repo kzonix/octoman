@@ -11,7 +11,7 @@
     "license": "ISC",
     "dependencies": {
         "@octokit/core": "^3.2.5",
-        "@octokit/rest": "^18.3.0",
+        "@octokit/rest": "^18.3.4",
         "chalk": "^4.1.0",
         "deepmerge": "^4.2.2",
         "dotenv": "^8.2.0",
@@ -27,7 +27,7 @@
         "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
         "@babel/plugin-proposal-private-methods": "^7.13.0",
         "@babel/plugin-transform-modules-commonjs": "^7.13.8",
-        "@babel/preset-env": "^7.13.8",
+        "@babel/preset-env": "^7.13.9",
         "eslint": "^7.21.0",
         "eslint-config-prettier": "^6.12.0",
         "eslint-config-prettier-standard": "^3.0.2",
