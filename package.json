@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@octokit/core": "^3.3.1",
+        "@octokit/core": "^3.4.0",
         "@octokit/rest": "^18.5.2",
         "chalk": "^4.1.0",
         "deepmerge": "^4.2.2",
@@ -20,8 +20,8 @@
         "pino": "^6.11.2"
     },
     "devDependencies": {
-        "@babel/core": "^7.13.13",
-        "@babel/eslint-parser": "^7.13.10",
+        "@babel/core": "^7.13.14",
+        "@babel/eslint-parser": "^7.13.14",
         "@babel/eslint-plugin": "^7.13.10",
         "@babel/plugin-proposal-class-properties": "^7.13.0",
         "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
