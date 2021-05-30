@@ -17,7 +17,7 @@
         "dotenv": "^8.6.0",
         "mkdirp": "^1.0.4",
         "moment": "^2.29.1",
-        "pino": "^6.11.0"
+        "pino": "^6.11.3"
     },
     "devDependencies": {
         "@babel/core": "^7.14.0",
